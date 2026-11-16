@@ -56,7 +56,40 @@ class ApiClient {
     final json = _tryDecode(response);
     final code = response.statusCode;
     if (code >= 200 && code <= 300) return json;
-    throw const NetworkFailure();
+    throw _failureFrom(code, json);
+  }
+
+  Failure _failureFrom(int code, dynamic json) {
+    switch (code) {
+      case 404:
+        return NotFoundFailure(_detailMessage(json, 'Not found'));
+      case 409:
+        return ConflictFailure(_detailMessage(json, 'Conflict'));
+      case 422:
+        return ValidationFailure(_validationFields(json));
+    }
+    return const NetworkFailure();
+  }
+
+  String _detailMessage(dynamic json, String fallback) {
+    if (json is Map && json['detail'] is String) {
+      return json['detail'] as String;
+    }
+    return fallback;
+  }
+
+  Map<String, String> _validationFields(dynamic json) {
+    final fields = <String, String>{};
+    if (json is! Map || json['detail'] is! List) return fields;
+    for (final item in json['detail'] as List) {
+      if (item is! Map) continue;
+      final loc = item['loc'];
+      final msg = item['msg'];
+      if (loc is List && loc.length > 1 && msg is String) {
+        fields['${loc[1]}'] = msg;
+      }
+    }
+    return fields;
   }
 
   dynamic _tryDecode(http.Response response) {

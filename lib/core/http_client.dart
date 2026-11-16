@@ -68,7 +68,8 @@ class ApiClient {
       case 422:
         return ValidationFailure(_validationFields(json));
     }
-    return const NetworkFailure();
+    if (code >= 500 && code <= 599) return ServerFailure(code);
+    return UnexpectedFailure(code, _detailMessage(json, 'Unexpected response'));
   }
 
   String _detailMessage(dynamic json, String fallback) {

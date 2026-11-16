@@ -36,10 +36,7 @@ class _ListaPedidosScreenState extends State<ListaPedidosScreen> {
     } catch (_) {
       if (!mounted) return; // No llamar a setState si ya no hay pantalla.
       setState(
-        () => _estado = const Error(
-          'No pudimos cargar los pedidos. '
-          'Revisa tu conexión e inténtalo de nuevo.',
-        ),
+        () => _estado = const Error('Revisa tu conexión e inténtalo de nuevo.'),
       );
     }
   }

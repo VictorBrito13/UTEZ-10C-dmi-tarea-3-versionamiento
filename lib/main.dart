@@ -1,35 +1,25 @@
+// IA: bloque generado con opencode y revisado por el alumno.
 import 'package:flutter/material.dart';
 
-import 'core/http_client.dart';
+import 'features/pedidos/ui/lista_pedidos_screen.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const GestorCafeteriaApp());
 }
 
-class MainApp extends StatelessWidget {
-  MainApp({super.key});
-
-  final ApiClient clientePrueba = ApiClient();
+class GestorCafeteriaApp extends StatelessWidget {
+  const GestorCafeteriaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: FutureBuilder<dynamic>(
-            future: clientePrueba.get('/orders'),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              return Text('${snapshot.data}');
-            },
-          ),
-        ),
+      title: 'Gestor Cafetería',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: const Color(0xFF6F4E37),
       ),
+      home: const ListaPedidosScreen(),
     );
   }
 }

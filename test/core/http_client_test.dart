@@ -113,4 +113,18 @@ void main() {
 
     expect(api.get('/orders'), throwsA(isA<NetworkFailure>()));
   });
+
+  test('300 lanza UnexpectedFailure con el statusCode', () async {
+    final mock = MockClient((request) async {
+      return http.Response('[]', 300);
+    });
+    final api = ApiClient(client: mock, baseUrl: 'http://prueba');
+
+    expect(
+      api.get('/orders'),
+      throwsA(
+        isA<UnexpectedFailure>().having((f) => f.statusCode, 'statusCode', 300),
+      ),
+    );
+  });
 }
